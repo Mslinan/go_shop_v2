@@ -11,7 +11,8 @@
     </Header>
     <!--首页导航-->
     <nav class="msite_nav">
-      <div class="swiper-container">
+      <img src="./images/msite_back.svg" v-if="categorys.length === 0">
+      <div class="swiper-container" v-else>
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(categorys, index) in categorysArr" :key="index">
             <a href="javascript:" class="link_to_food" v-for="(categroy, index) in categorys" :key="index">
@@ -38,14 +39,8 @@ import chunk from 'lodash/chunk'
 import {mapState} from 'vuex'
 export default {
   name: 'Msite',
-  data() {
-    return {
-      
-    }
-  },
   mounted () {
     this.$store.dispatch('getFoodsCate')
-    
   },
   computed: {
     ...mapState(['address','categorys']),

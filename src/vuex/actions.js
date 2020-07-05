@@ -2,13 +2,17 @@
 import {
   reqAddress,
   reqFoodsCateList,
-  reqShopList
+  reqShopList,
+  reqAutoLogin
 } from '../api/index'
 
 import {
   RECEIVE_ADDRESS,
   RECEIVE_FOODSCATE,
-  RECEIVE_SHOPLIST
+  RECEIVE_SHOPLIST,
+  RECEIVE_User,
+  LOGOUT,
+  RECEIVE_TOKEN
 } from './mutation-types'
 
 export default  {
@@ -39,6 +43,31 @@ export default  {
     const res = await reqShopList (state.longitude,state.latitude)
     if (res.code === 0) {
       commit(RECEIVE_SHOPLIST, res.data) 
+    }
+  },
+  // 保存用户信息
+  saveUser (context,user) {
+    // 将token存到local中
+    const token = user.token
+    localStorage.setItem('token_Id',token)
+    // 删除user中的token
+    delete user.token
+    // 将token保存到state中
+    context.commit(RECEIVE_User,user)
+    context.commit(RECEIVE_TOKEN, token)
+  },
+  // 退出登录
+  logout ({commit}) {
+    // 清除local中的token
+    localStorage.removeItem('token_Id')
+    commit(LOGOUT)
+  },
+  // 自动登录
+  async autoLogin ({commit}) {
+      const result = await reqAutoLogin()
+      if (result.code===0) {
+        const user = result.data
+        commit(RECEIVE_User, user)
     }
   },
 }

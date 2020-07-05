@@ -2,46 +2,50 @@
   <section class="loginContainer">
     <div class="loginInner">
       <div class="login_header">
-        <h2 class="login_logo">硅谷外卖</h2>
+        <h2 class="login_logo">南瓜🎃外卖</h2>
         <div class="login_header_title">
-          <a href="javascript:;" class="on">短信登录</a>
-          <a href="javascript:;">密码登录</a>
+          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay = true">短信登录</a>
+          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay = false">密码登录</a>
         </div>
       </div>
       <div class="login_content">
         <form>
-          <div class="on">
+          <div :class="{on: loginWay}">
             <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button disabled="disabled" class="get_verification">获取验证码</button>
+              <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
+              <button :disabled="!isRigthPhone || computTime > 0" class="get_verification" 
+                :class="{right: isRigthPhone}" @click.prevent="sendCode">
+                {{computTime === 0 ? '发送验证码' : `验证码已发送(${computTime})s`}}
+              </button>
             </section>
             <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码">
+              <input type="tel" maxlength="8" placeholder="验证码" v-model="code">
             </section>
             <section class="login_hint">
-              温馨提示：未注册硅谷外卖帐号的手机号，登录时将自动注册，且代表已同意
+              温馨提示：未注册南瓜外卖帐号的手机号，登录时将自动注册，且代表已同意
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div>
+          <div :class="{on: !loginWay}">
             <section>
               <section class="login_message">
-                <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
+                <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名" v-model="name">
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码">
-                <div class="switch_button off">
-                  <div class="switch_circle"></div>
-                  <span class="switch_text">...</span>
+                <input :type="isShowPwd ? 'text' : 'password'" maxlength="8" placeholder="密码" v-model="pwd">
+                <div class="switch_button" @click="isShowPwd = !isShowPwd" :class="isShowPwd ? 'on' : 'off'">
+                  <div class="switch_circle" :class="isShowPwd ? 'right' : ''"></div>
+                  <span class="switch_text">{{isShowPwd ? 'abc' : ''}}</span>
                 </div>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
+                <img class="get_verification" ref="captchaRef" :src="'http://localhost:4000/captcha'" 
+                @click="changeCaptch" alt="captcha">
               </section>
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit" @click.prevent="login">登录</button>
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
@@ -53,8 +57,84 @@
 </template>
 
 <script>
+import {reqSendCode,reqLoginSms,reqLoginPwd} from '../../api/index'
+import { Toast ,MessageBox} from 'mint-ui';
 export default {
-
+  data() {
+    return {
+      loginWay: true, //登录方式，true为短信登录
+      phone: '', // 手机号
+      code: '', // 手机验证码
+      computTime: 0, // 发送验证码剩余时间
+      isShowPwd: false, // 是否显示密码,
+      name: '',
+      pwd: '',
+      captcha: ''
+    }
+  },
+  computed: {
+    // 手机号是否正确
+    isRigthPhone () {
+      return /^1[0-9]{10}$/.test(this.phone)
+    }
+  },
+  methods: {
+    // 获取验证码
+    async sendCode () {
+      // 定义发送验证码时长
+      let computTime = 10
+      // 开启定时器
+      const timer = setInterval(() => {
+        computTime--
+        if (computTime <= 0) {
+          clearInterval(timer)
+        }
+        this.computTime = computTime
+      }, 1000);
+      // 发请求，获取短信验证码
+      const res = await reqSendCode (this.phone)
+      // console.log(res)
+      if (res.code === 0) {
+        Toast('发送短信验证码成功');
+      }else {
+        this.computTime = 0
+        MessageBox('提示', res.msg);
+      }
+    },
+    // 一次性图形验证改变
+    changeCaptch () {
+      this.$refs.captchaRef.src = 'http://localhost:4000/captcha?time=' + Date.now()
+    },
+    // 登录
+    async login () {
+      let res
+      if (this.loginWay) {
+        // 短信登录
+        res = await reqLoginSms(this.phone ,this.code)
+      }else {
+        // 用户名密码登录
+        res = await reqLoginPwd(this.name, this.pwd, this.captcha)
+        if (res.code !== 0) {
+          // 刷新验证码
+          this.changeCaptch()
+          // 验证码清空
+          this.captcha = ''
+        }
+      }
+      if (res.code === 0) {
+        // 登录成功
+        // 保存user
+        const user = res.data
+        this.$store.dispatch('saveUser',user)
+        
+        // 跳转页面
+        this.$router.replace('/profile')
+      }else {
+        // 登录失败
+        MessageBox('提示', '验证码或密码不正确');
+      }
+    }
+  }
 }
 </script>
 
@@ -119,6 +199,8 @@ export default {
               color #ccc
               font-size 14px
               background transparent
+              &.right
+                color black
           .login_verification
             position relative
             margin-top 16px
@@ -158,6 +240,8 @@ export default {
                 background #fff
                 box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
                 transition transform .3s
+                &.right
+                  transform translateX(27px)
           .login_hint
             margin-top 12px
             color #999
