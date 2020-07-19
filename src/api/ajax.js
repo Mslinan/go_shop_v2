@@ -16,7 +16,7 @@ instence.interceptors.request.use(config => {
     config.data = qs.stringify(config.data) // username=admit&pwd=123456
   }
   // 处理token
-  const token = store.state.token
+  const token = store.state.user.token
   if (config.headers.needToken) {  // 需要token验证
     // 如果token有值, 添加授权的头, 值为token
     if (token) {

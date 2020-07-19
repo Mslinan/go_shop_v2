@@ -33,7 +33,13 @@ export default {
   methods: {
     // 路由跳转页面
     goto (path) {
-      this.$router.replace(path)
+      // 判断是不是又点击了当前页面的导航
+      if (this.$route.path !== path) {
+        this.$router.replace(path)
+      }else {
+        // 如果是，强制刷新页面
+        window.location.reload()
+      }
     }
   }
 }

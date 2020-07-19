@@ -66,3 +66,15 @@ export const reqAutoLogin = () => {
   })
 }
 
+export const reqShopGoods = () => {
+  return ajax('/goods')
+}
+
+export const reqShopRatings = () => {
+  return ajax('/rating')
+}
+
+export const reqShopInfo = () => {
+  return ajax('/info')
+}
+
