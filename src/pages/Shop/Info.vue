@@ -1,12 +1,15 @@
 <template>
   <div>
-    商家信息
+    <ShopInfo></ShopInfo>
   </div>
 </template>
 
 <script>
+import ShopInfo from '../../components/ShopInfo/ShopInfo'
 export default {
-
+  components: {
+    ShopInfo
+  }
 }
 </script>
 

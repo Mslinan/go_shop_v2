@@ -1,15 +1,20 @@
 <template>
   <div>
-    评价
+    <ShopRatings></ShopRatings>
+    <!-- <RatingsFilter></RatingsFilter> -->
   </div>
 </template>
 
 <script>
-export default {
 
+import ShopRatings from '../../components/ShopRatings/ShopRatings'
+export default {
+  components: {
+    ShopRatings
+  }
 }
 </script>
 
-<style>
-
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+  
 </style>

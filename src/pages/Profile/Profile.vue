@@ -91,6 +91,10 @@
     <section>
       <mt-button type="danger" style="width: 100%; margin-top: 10px" @click="logout" v-if="user._id">退出登录</mt-button>
     </section>
+    <!-- 路由导航守卫测试 -->
+    <div @click="$router.push('/a')">A-必须登录</div><br>
+    <div @click="$router.push('/b')">B-必须登录</div><br>
+    <div @click="$router.push('/c')">去登录（去个人中心）</div>
   </section>
 </template>
 

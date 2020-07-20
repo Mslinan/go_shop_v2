@@ -42,12 +42,14 @@
       </div>
     </div>
     <Food ref="foodRef" :food="food"></Food>
+    <ShopCart></ShopCart>
   </div>
 </template>
 
 <script>
 import BScroll from '@better-scroll/core'
 import Food from '../../components/food/food'
+import ShopCart from '../../components/ShopCart/ShopCart'
 import {mapState} from 'vuex'
 export default {
   data() {
@@ -145,7 +147,8 @@ export default {
     }
   },
   components: {
-    Food
+    Food,
+    ShopCart
   }
 };
 </script>
@@ -156,7 +159,7 @@ export default {
   .goods
     display: flex
     position: absolute
-    top: 195px
+    top: 225px
     bottom: 46px
     width: 100%
     background: #fff;

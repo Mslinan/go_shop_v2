@@ -80,9 +80,65 @@ const mutations = {
       // 当食物数量不为0
       food.count--
     }
+  }
+}
+const getters = {
+  // 构造购物车数组，数量大于1
+  cartArr (state) {
+    let cartArr = []  // 构造的购物车数组
+    const goods = state.goods
+    goods.forEach(good => {
+      good.foods.forEach(food => {
+        if (food.count >= 1) {
+          cartArr.push(food)
+        }
+      })
+    })
+    return cartArr
+  },
+  // 计算总数量
+  totalNum (state, getters) {
+    const cartArr = getters.cartArr
+    let totalNum = 0
+    cartArr.forEach(food => {
+      totalNum += food.count
+    })
+    return totalNum
+  },
+  // 计算总价格 = 单价 * 数量
+  totalPrice (state, getters) {
+    const cartArr = getters.cartArr
+    let totalPrice = 0
+    cartArr.forEach(food => {
+      totalPrice += food.count * food.price
+    })
+    return totalPrice
+  },
+  // 计算评论总数
+  totalRatings (state) {
+    return state.ratings.length
+  },
+  // 计算吐槽评论总数
+  tucaototalRatings (state) {
+    let ratings = []
+    state.ratings.forEach(rating => {
+      if (rating.rateType === 1) {
+        ratings.push(rating)
+      }
+    });
+    return ratings.length
+  },
+  // 计算推荐评论总数
+  tuijiantotalRatings (state) {
+    let ratings = []
+    state.ratings.forEach(rating => {
+      if (rating.rateType === 0) {
+        ratings.push(rating)
+      }
+    });
+    return ratings.length
   },
 }
-const getters = {}
 
 
 

@@ -8,6 +8,13 @@ import Goods from '../pages/Shop/Goods.vue'
 import Rating from '../pages/Shop/Rating.vue'
 import Info from '../pages/Shop/Info.vue'
 
+
+import A from '../pages/A.vue'
+import B from '../pages/B.vue'
+import C from '../pages/C.vue'
+
+
+
 export default [
   {
     path: '/msite',
@@ -15,6 +22,18 @@ export default [
     meta: {
       isShow: true
     }
+  },
+  {
+    path: '/a',
+    component: A,
+  },
+  {
+    path: '/b',
+    component: B,
+  },
+  {
+    path: '/c',
+    component: C,
   },
   {
     path: '/order',

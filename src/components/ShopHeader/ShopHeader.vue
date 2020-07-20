@@ -24,6 +24,7 @@
           </span>
           <span class="shop-message-detail">距离 {{info.distance}}</span>
         </div>
+        <p class="shop-notice">{{info.bulletin}}</p>
       </div>
     </div>
     <div class="shop-header-discounts" @click="isShowSheet=true" v-if="info.supports">
@@ -73,7 +74,7 @@
           </ul>
           <h3 class="brief-modal-title"><span>公告</span></h3>
           <div class="brief-modal-notice">
-            是以粥为特色的中式营养快餐，自 2004 年 10 月 18 日创立“嘉和一品”品牌至今
+            {{info.bulletin}}
           </div>
           <div class="mask-footer">
             <span class="iconfont icon-close" @click="isShowBulletin=false"></span>
